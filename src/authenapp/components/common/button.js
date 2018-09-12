@@ -6,7 +6,7 @@ class Button extends Component {
         return(
             <View style = {style.container}>
                 <TouchableOpacity onPress = { this.props.onPress } style = {style.button}>
-                    <Text style = {style.buttonText}>Log In</Text>
+                    <Text style = {style.buttonText}>{ this.props.children }</Text>
                 </TouchableOpacity>    
             </View>   
         );
@@ -16,11 +16,9 @@ class Button extends Component {
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignSelf: 'stretch',
         alignItems: 'center'
     },
     button: {
-        flex: 1,
         alignItems: 'center',
         alignSelf: 'stretch',
         backgroundColor: '#0652dd',

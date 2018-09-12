@@ -5,13 +5,13 @@ import {
   Text,
   View
 } from 'react-native';
-import firebase from 'firebase';
-import { Header, Button, Card, CardSection } from "./src/authenapp/components/common";
-
+const firebase = require("firebase");
+import { Header, Button, Card, CardSection, Spinner } from "./src/authenapp/components/common";
+import LoginForm from './src/authenapp/components/loginForm';
 
 // FOR ALBUM APP
-/* Props = {};
-
+/*Props = {};
+import AlbumList from './src/components/albumList';
 export default class App extends Component<Props> {
   render() {
     return (
@@ -21,10 +21,17 @@ export default class App extends Component<Props> {
       </View>
     );
   }
-} */
+}
+*/
 
 export default class App extends Component {
-  componentWillMount() {
+  state = {
+    isLogin: null
+  }
+
+  initializeFirebase() {
+  
+    // Initialize Firebase
     firebase.initializeApp({
       apiKey: "AIzaSyBsq4EjsUUPCzZhcuJb44hDfJqA2gb8F4Q",
       authDomain: "react-authen-33d8c.firebaseapp.com",
@@ -32,13 +39,47 @@ export default class App extends Component {
       projectId: "react-authen-33d8c",
       storageBucket: "react-authen-33d8c.appspot.com",
       messagingSenderId: "905831289305"
+    });
+    
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user){
+        this.setState({ isLogin: true })
+      } else {
+        this.setState({ isLogin: false })
+      }
     })
+
+    //inicializando o firestore
+    const firestore = require("firebase/firestore");
+    db = firebase.firestore();
+    db.settings({ timestampsInSnapshots: true });
   }
+
+  componentWillMount() {
+    this.initializeFirebase();
+  }
+
+  renderContent() {
+    switch(this.state.isLogin){
+      case true:
+        return(
+          <Button onPress = {() => {firebase.auth().signOut()}}>
+            Log Out 
+          </Button>
+          )
+      case false:
+        return <LoginForm />
+      default:
+        return <Spinner />
+    }
+      
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Header headerText='Authentication'/>
-        
+        {this.renderContent()}
       </View>
     );
   }
@@ -49,7 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     //justifyContent: 'center',
-    alignItems: 'center',
+    
     backgroundColor: '#F5FCFF',
   },
   welcome: {
